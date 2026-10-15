@@ -1,0 +1,89 @@
+\begin{table}[p]
+\centering
+\caption{Global optimization: primal bounds $\underline{z}_f$, dual bounds
+  $\overline{z}_f$, and gaps~\eqref{eq:gap} (in \%) obtained by \texttt{SCIP}
+  within the time limit of 3600\,s.  PA\_G$_0$ and CAR$_0$ use only the bounds
+  of Proposition~\ref{prop:beta-norm-bound}; PA\_G and CAR use all bounds of
+  Section~\ref{subsec:valid-bounds}.  Gaps are computed with respect to
+  $z_{\mathrm{best}}$, the largest primal bound among the methods that found a
+  feasible solution; the smallest gap of each instance is shown in bold.
+  ``--'' = no feasible solution found.}
+\label{tab:obj_gap}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{@{}ll rrrrrrrr@{}}
+\toprule
+ & & Biopsy & Smarket & fgl & College & OJ & Banknote & Ionosphere & Spambase \\
+\midrule
+\multicolumn{10}{@{}l}{$\rho = 5\%$} \\
+\cmidrule(r){1-2}
+\multirow{4}{*}{$\underline{z}_f$} & PA\_G$_0$ & 45.55 & 261.98 & 33.37 & 102.44 & 150.43 & 209.98 & 52.84 & 912.97 \\
+ & CAR$_0$ & 45.55 & 261.98 & 33.37 & 102.44 & 150.43 & 209.99 & 52.85 & 912.97 \\
+ & PA\_G & 45.55 & 261.98 & 33.37 & 102.44 & 150.43 & 209.98 & 52.84 & 912.97 \\
+ & CAR & 45.55 & 261.98 & 33.37 & 102.44 & 150.43 & 209.98 & 52.85 & 911.19 \\
+\addlinespace[2pt]
+\multirow{4}{*}{$\overline{z}_f$} & PA\_G$_0$ & 3016.9 & 9190.6 & 475.4 & 6411.4 & 10223.3 & 9856.9 & 3843.3 & 48918.4 \\
+ & CAR$_0$ & 75.3 & 272.9 & 37.4 & 126.1 & 180.4 & 248.3 & 62.5 & 991.7 \\
+ & PA\_G & 661.5 & 330.5 & 63.7 & 867.1 & 967.9 & 607.3 & 373.2 & 6728.7 \\
+ & CAR & 75.0 & 272.9 & 37.4 & 126.1 & 180.4 & 250.1 & 62.5 & 982.5 \\
+\addlinespace[2pt]
+\multirow{4}{*}{gap (\%)} & PA\_G$_0$ & 6523.7 & 3408.2 & 1324.8 & 6158.6 & 6696.0 & 4594.0 & 7172.7 & 5258.1 \\
+ & CAR$_0$ & 65.2 & \textbf{4.2} & \textbf{12.2} & \textbf{23.1} & \textbf{19.9} & \textbf{18.2} & \textbf{18.4} & 8.6 \\
+ & PA\_G & 1352.4 & 26.2 & 90.9 & 746.4 & 543.4 & 189.2 & 606.2 & 637.0 \\
+ & CAR & \textbf{64.7} & \textbf{4.2} & \textbf{12.2} & \textbf{23.1} & \textbf{19.9} & 19.1 & \textbf{18.4} & \textbf{7.6} \\
+\midrule
+\multicolumn{10}{@{}l}{$\rho = 10\%$} \\
+\cmidrule(r){1-2}
+\multirow{4}{*}{$\underline{z}_f$} & PA\_G$_0$ & 57.66 & 264.21 & 35.17 & 117.35 & 166.57 & 233.66 & 60.64 & -- \\
+ & CAR$_0$ & 57.66 & 264.21 & 35.17 & 117.35 & 166.57 & 233.66 & 60.65 & 951.83 \\
+ & PA\_G & 57.66 & 264.21 & 35.17 & 117.35 & 166.57 & 233.66 & 60.64 & 951.82 \\
+ & CAR & 57.66 & 264.21 & 35.17 & 117.35 & 166.57 & 233.66 & 60.65 & -- \\
+\addlinespace[2pt]
+\multirow{4}{*}{$\overline{z}_f$} & PA\_G$_0$ & 3606.1 & 9534.6 & 571.0 & 6446.8 & 10516.6 & 10227.6 & 3907.6 & 50069.5 \\
+ & CAR$_0$ & 99.0 & 286.1 & 41.4 & 146.6 & 207.7 & 286.9 & 72.3 & 1041.6 \\
+ & PA\_G & 886.7 & 395.3 & 88.5 & 916.3 & 974.2 & 697.1 & 425.5 & 7424.0 \\
+ & CAR & 99.0 & 286.1 & 41.0 & 146.6 & 207.7 & 288.9 & 72.3 & 1036.4 \\
+\addlinespace[2pt]
+\multirow{4}{*}{gap (\%)} & PA\_G$_0$ & 6154.4 & 3508.7 & 1523.7 & 5393.6 & 6213.6 & 4277.1 & 6343.3 & 5160.4 \\
+ & CAR$_0$ & \textbf{71.7} & \textbf{8.3} & 17.6 & \textbf{24.9} & \textbf{24.7} & \textbf{22.8} & \textbf{19.2} & 9.4 \\
+ & PA\_G & 1437.9 & 49.6 & 151.5 & 680.8 & 484.9 & 198.3 & 601.6 & 680.0 \\
+ & CAR & \textbf{71.7} & \textbf{8.3} & \textbf{16.6} & \textbf{24.9} & \textbf{24.7} & 23.7 & \textbf{19.2} & \textbf{8.9} \\
+\midrule
+\multicolumn{10}{@{}l}{$\rho = 15\%$} \\
+\cmidrule(r){1-2}
+\multirow{4}{*}{$\underline{z}_f$} & PA\_G$_0$ & 69.63 & 266.07 & 37.04 & 128.34 & 178.98 & 253.10 & 64.65 & -- \\
+ & CAR$_0$ & 69.63 & 264.72 & 37.05 & 128.34 & 178.98 & 253.10 & 64.65 & -- \\
+ & PA\_G & 69.63 & 266.07 & 37.04 & 128.34 & 178.98 & 253.10 & 64.65 & 977.53 \\
+ & CAR & 69.63 & 265.06 & 37.05 & 128.34 & 178.98 & 253.10 & 64.65 & -- \\
+\addlinespace[2pt]
+\multirow{4}{*}{$\overline{z}_f$} & PA\_G$_0$ & 3722.0 & 10055.4 & 627.1 & 7028.3 & 10521.7 & 10554.1 & 4074.1 & 51194.8 \\
+ & CAR$_0$ & 119.0 & 298.6 & 45.7 & 162.2 & 230.1 & 316.6 & 78.2 & 1090.7 \\
+ & PA\_G & 937.4 & 456.8 & 108.5 & 972.4 & 1063.7 & 753.5 & 473.9 & 8239.4 \\
+ & CAR & 119.0 & 298.6 & 45.5 & 162.2 & 230.1 & 316.7 & 78.2 & 1167.6 \\
+\addlinespace[2pt]
+\multirow{4}{*}{gap (\%)} & PA\_G$_0$ & 5245.3 & 3679.3 & 1592.7 & 5376.5 & 5778.6 & 4069.9 & 6201.9 & 5137.2 \\
+ & CAR$_0$ & \textbf{70.9} & \textbf{12.2} & 23.3 & \textbf{26.4} & \textbf{28.6} & \textbf{25.1} & \textbf{20.9} & \textbf{11.6} \\
+ & PA\_G & 1246.2 & 71.7 & 192.9 & 657.7 & 494.3 & 197.7 & 633.1 & 742.9 \\
+ & CAR & \textbf{70.9} & \textbf{12.2} & \textbf{22.8} & \textbf{26.4} & \textbf{28.6} & \textbf{25.1} & \textbf{20.9} & 19.4 \\
+\midrule
+\multicolumn{10}{@{}l}{$\rho = 20\%$} \\
+\cmidrule(r){1-2}
+\multirow{4}{*}{$\underline{z}_f$} & PA\_G$_0$ & 78.77 & 267.85 & 38.34 & 136.93 & 189.30 & 268.10 & 67.49 & -- \\
+ & CAR$_0$ & 78.77 & 267.85 & 38.34 & 136.93 & 189.31 & 268.10 & 67.49 & -- \\
+ & PA\_G & 78.77 & 267.85 & 38.34 & 136.93 & 189.30 & 268.10 & 67.49 & 998.70 \\
+ & CAR & 78.77 & 266.57 & 38.34 & 136.93 & 189.31 & 268.10 & 67.49 & -- \\
+\addlinespace[2pt]
+\multirow{4}{*}{$\overline{z}_f$} & PA\_G$_0$ & 3814.9 & 10424.3 & 613.8 & 7235.6 & 11051.3 & 10867.7 & 4152.8 & 52295.9 \\
+ & CAR$_0$ & 134.1 & 311.8 & 49.0 & 174.2 & 249.1 & 336.9 & 83.3 & 1218.4 \\
+ & PA\_G & 981.4 & 517.3 & 119.8 & 1038.8 & 1156.5 & 811.6 & 499.4 & 8848.3 \\
+ & CAR & 134.1 & 311.8 & 49.0 & 174.2 & 249.1 & 337.1 & 83.3 & 1218.4 \\
+\addlinespace[2pt]
+\multirow{4}{*}{gap (\%)} & PA\_G$_0$ & 4743.1 & 3791.8 & 1501.2 & 5184.2 & 5737.8 & 3953.6 & 6053.1 & 5136.4 \\
+ & CAR$_0$ & \textbf{70.3} & \textbf{16.4} & \textbf{27.8} & \textbf{27.2} & \textbf{31.6} & \textbf{25.6} & \textbf{23.5} & \textbf{22.0} \\
+ & PA\_G & 1145.9 & 93.1 & 212.5 & 658.6 & 510.9 & 202.7 & 640.0 & 786.0 \\
+ & CAR & \textbf{70.3} & \textbf{16.4} & \textbf{27.8} & \textbf{27.2} & \textbf{31.6} & 25.7 & \textbf{23.5} & \textbf{22.0} \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
