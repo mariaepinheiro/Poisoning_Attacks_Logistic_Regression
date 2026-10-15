@@ -117,4 +117,41 @@ open(joinpath(DIR, "tables", "tab_obj_gap.tex"), "w") do io
 \end{adjustbox}
 \end{table}""")
 end
-println("Written: tables/tab_attack_drops.tex, tables/tab_obj_gap.tex")
+
+
+
+# ── Bound widths ─────────────────────────────────────────────────────────────
+bw = CSV.read(joinpath(DIR, "results", "phase2", "bounds_summary.csv"), DataFrame)
+
+open(joinpath(DIR, "tables", "tab_bound_widths.tex"), "w") do io
+    println(io, raw"""\begin{table}[t]
+\centering
+\footnotesize
+\caption{Average width of the bounds obtained from
+  Proposition~\ref{prop:beta-norm-bound} only (Prop.~3) and from all bounds of
+  Section~\ref{subsec:valid-bounds} (All), for the components of~$\beta$, the
+  margins~$\theta^{tr}$ of the training points, the inner products~$z^p$ of the
+  poisoning points, and the variables~$\alpha^p$.  Mean over the four
+  budgets~$\rho$.}
+\label{tab:bound_widths}
+\begin{tabular}{@{}l rr rr rr rr@{}}
+\toprule
+ & \multicolumn{2}{c}{$\beta$} & \multicolumn{2}{c}{$\theta^{tr}$}
+ & \multicolumn{2}{c}{$z^p$} & \multicolumn{2}{c}{$\alpha^p$} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9}
+Dataset & Prop.~3 & All & Prop.~3 & All & Prop.~3 & All & Prop.~3 & All \\
+\midrule""")
+    for ds in ORDER
+        S = bw[bw.dataset .== ds, :]
+        m(c) = mean(S[!, c])
+        @printf(io, "%s & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.3f & %.3f \\\\\n",
+                show_name(ds), m(:beta_w_prop3), m(:beta_w_full),
+                m(:theta_w_prop3), m(:theta_w_full), m(:zp_w_prop3), m(:zp_w_full),
+                m(:alphap_w_prop3), m(:alphap_w_full))
+    end
+    println(io, raw"""\bottomrule
+\end{tabular}
+\end{table}""")
+end
+
+println("Written: tables/tab_attack_drops.tex, tables/tab_obj_gap.tex, tables/tab_bound_widths.tex")
