@@ -1,0 +1,17 @@
+# Julia
+*.jl.cov
+*.jl.mem
+
+# intermediate files of the runs
+results/**/jobs/
+results/**/solver_logs/
+*.jls
+*.log
+
+# downloaded data (re-downloaded automatically)
+
+# OS / editors
+.DS_Store
+.vscode/
+data/*
+!data/.gitkeep
