@@ -82,13 +82,12 @@ of the global solver may differ slightly between machines.
 
 ### Phase 1: attack effectiveness
 
-![Accuracy under attack](figures/ac_grid.png)
-![MCC under attack](figures/mcc_grid.png)
+![Accuracy under attack](figures/ac_grid.pdf)
+![MCC under attack](figures/mcc_grid.pdf)
 
 ### Phase 2: global optimization
 
-![Gaps](figures/gap_grid.png)
-![Dual-bound ratios](figures/ratio_grid.png)
+![Dual-bound ratios](figures/ratio_grid.pdf)
 
 ## Citation
 
