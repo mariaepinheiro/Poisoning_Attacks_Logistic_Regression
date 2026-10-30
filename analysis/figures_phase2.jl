@@ -11,6 +11,7 @@
 #   Style: one color per dataset (same as Phase 1);
 #          r_0 dashed, larger hollow diamond; r solid, smaller filled diamond
 #          (the two curves nearly coincide, so both remain visible).
+#   Vertical axis: linear, with its own scale in each panel.
 # ==============================================================================
 using CSV, DataFrames, Plots, Measures, LaTeXStrings
 gr()
@@ -96,8 +97,10 @@ for ds in datasets
     r0, r = ratios(ds)
     ttl = get(names_show, ds, ds)
 
+    # eixo linear, próprio de cada painel, começando logo abaixo de 1
+    ymax = max(1.1, 1.05 * maximum(vcat(r0, r)))
     p_ratio = plot(title = ttl, xlabel = "ρ", ylabel = "dual ratio",
-                   xticks = (x_positions, x_labels), yscale = :log10, ylims = (0.8, 100))
+                   xticks = (x_positions, x_labels), ylims = (0.98, ymax))
     hline!(p_ratio, [1.0]; color = :gray, linestyle = :dot, linewidth = 1, marker = :none)
     plot!(p_ratio, x_positions, r0; color = c, linestyle = :dash, marker = :diamond,
           markersize = 8, markercolor = :white, markerstrokecolor = c)
