@@ -142,4 +142,3 @@ display(plt_ratio_grid)
 # SALVAR (PDF para LaTeX)
 # ==========================================
 savefig(plt_ratio_grid, joinpath(DIR, "figures", "ratio_grid.pdf"))
-savefig(plt_ratio_grid, joinpath(DIR, "figures", "ratio_grid.png"))
