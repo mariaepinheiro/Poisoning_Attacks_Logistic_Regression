@@ -77,6 +77,5 @@ display(plt_ac)
 display(plt_mcc)
 
 savefig(plt_ac, joinpath(DIR, "figures", "ac_grid.pdf"))
-savefig(plt_ac, joinpath(DIR, "figures", "ac_grid.png"))
+
 savefig(plt_mcc, joinpath(DIR, "figures", "mcc_grid.pdf"))
-savefig(plt_mcc, joinpath(DIR, "figures", "mcc_grid.png"))
