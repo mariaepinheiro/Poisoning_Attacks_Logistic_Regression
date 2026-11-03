@@ -1,7 +1,8 @@
-# Poisoning Attacks on Logistic Regression
+# A Convex-Analytic Reformulation for Poisoning Attacks on Logistic Regression
 
-Code and results for the paper *Poisoning Attacks on Logistic Regression*
-by C. M. Costa, M. E. Pinheiro, and M. Schmidt.
+Code and results for the paper *A Convex-Analytic Reformulation for
+Poisoning Attacks on Logistic Regression* by C. M. Costa, M. E. Pinheiro,
+and M. Schmidt.
 
 The poisoning attack is a bilevel problem.  We compare two single-level
 reformulations, both solved with the spatial branch-and-bound solver SCIP:
@@ -23,7 +24,7 @@ analysis/      scripts that produce the tables and figures of the paper
 results/       raw results used in the paper (CSV)
 figures/       figures of the paper (PDF, and PNG for this page)
 tables/        tables of the paper (LaTeX)
-data/          downloaded data (Spambase)
+data/          UCI datasets (Banknote, Ionosphere, Spambase)
 ```
 
 | File | Content |
@@ -39,6 +40,13 @@ data/          downloaded data (Spambase)
 | `experiments/run_phase2_pagfull.jl` | Phase 2: PA_G with all bounds |
 | `analysis/tables_paper.jl` | tables of Section 4 |
 | `analysis/figures_phase1.jl`, `analysis/figures_phase2.jl` | figures of Section 4 |
+
+## Data
+
+Biopsy, fgl (R package MASS) and Smarket, College, OJ (R package ISLR) are
+loaded through RDatasets.jl, whose version is fixed in `Manifest.toml`.
+The Banknote Authentication, Ionosphere and Spambase datasets in `data/`
+are from the UCI Machine Learning Repository (https://archive.ics.uci.edu).
 
 ## Requirements
 
@@ -61,7 +69,7 @@ regenerated without rerunning the experiments:
 ```bash
 julia --project=. analysis/tables_paper.jl      # → tables/
 julia --project=. analysis/figures_phase1.jl    # → figures/ac_grid, mcc_grid
-julia --project=. analysis/figures_phase2.jl    # → figures/gap_grid, ratio_grid
+julia --project=. analysis/figures_phase2.jl    # → figures/ratio_grid
 ```
 
 To rerun the experiments:
@@ -69,12 +77,12 @@ To rerun the experiments:
 ```bash
 julia --project=. experiments/quick_test.jl          # check the installation
 julia --project=. experiments/run_phase1.jl          # several hours
-julia --project=. experiments/run_phase2.jl          # ≈ 20 h with 5 workers
-julia --project=. experiments/run_phase2_pagfull.jl  # ≈ 7 h with 5 workers
+julia --project=. experiments/run_phase2.jl          # ≈ 16 h with 6 workers
+julia --project=. experiments/run_phase2_pagfull.jl  # ≈ 6 h with 6 workers
 ```
 
-The run scripts save each finished instance as soon as it completes and skip
-finished instances when restarted, so long runs can be interrupted and
+`run_phase2_pagfull.jl` saves each finished instance as soon as it completes
+and skips finished instances when restarted, so it can be interrupted and
 resumed.  Running times depend on the machine; with a time limit, the results
 of the global solver may differ slightly between machines.
 
@@ -82,23 +90,20 @@ of the global solver may differ slightly between machines.
 
 ### Phase 1: attack effectiveness
 
-![Accuracy under attack](figures/ac_grid.pdf)
-![MCC under attack](figures/mcc_grid.pdf)
+![Accuracy under attack](figures/ac_grid.png)
+![MCC under attack](figures/mcc_grid.png)
 
 ### Phase 2: global optimization
 
-![Dual-bound ratios](figures/ratio_grid.pdf)
+![Dual-bound ratios](figures/ratio_grid.png)
 
 ## Citation
 
 ```bibtex
 @article{CostaPinheiroSchmidt2026,
-  title  = {Poisoning Attacks on Logistic Regression},
+  title  = {A Convex-Analytic Reformulation for Poisoning Attacks on Logistic Regression},
   author = {Costa, Carina Moreira and Pinheiro, Maria Eduarda and Schmidt, Martin},
   year   = {2026}
 }
 ```
 
-## License
-
-To be decided.
