@@ -16,7 +16,6 @@
 using CSV, DataFrames, Plots, Measures, LaTeXStrings
 gr()
 
-const USE_NEW_CAR = true          # true: use results/phase2_car_v2 for CAR_0 and CAR
 
 const ROOT = normpath(joinpath(@__DIR__, ".."))   # repository root
 const DIR  = ROOT
@@ -32,10 +31,6 @@ r1.method = replace(r1.method, "PA_G" => "PA_G_0")           # Prop. 3 only
 r2.method = replace(r2.method, "PA_G_full" => "PA_G")        # all bounds
 cols = [:dataset, :q_ratio, :method, :n, :d, :q, :dual]
 df = vcat(select(r1, cols), select(r2, cols))
-if USE_NEW_CAR                     # CAR_0 and CAR from the rerun (review note 13)
-    r3 = CSV.read(joinpath(DIR, "results", "phase2_car_v2", "phase2_car_results.csv"), DataFrame)
-    df = vcat(df[.!in.(df.method, Ref(["CAR_0", "CAR"])), :], select(r3, cols))
-end
 
 datasets    = ["biopsy", "Smarket", "fgl", "College", "OJ", "Banknote", "Ionosphere", "Spambase"]
 names_show  = Dict("biopsy" => "Biopsy")

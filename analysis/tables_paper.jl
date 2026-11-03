@@ -148,12 +148,10 @@ open(joinpath(DIR, "tables", "tab_bound_widths.tex"), "w") do io
     println(io, raw"""\begin{table}[t]
 \centering
 \footnotesize
-\caption{Average width of the bounds obtained from
-  Proposition~\ref{prop:beta-norm-bound} only (Prop.~3) and from all bounds of
-  Section~\ref{subsec:valid-bounds} (All), for the components of~$\beta$, the
-  margins~$\theta^{tr}$ of the training points, the inner products~$z^p$ of the
-  poisoning points, and the variables~$\alpha^p$, and time needed to compute
-  all bounds.  Mean over the four budgets~$\rho$.}
+\caption{Average bound widths with the bounds of
+  Proposition~\ref{prop:beta-norm-bound} only (Prop.~3) and with all bounds
+  of Section~\ref{subsec:valid-bounds} (All), and time to compute all
+  bounds.  Mean over the four budgets~$\rho$.}
 \label{tab:bound_widths}
 \begin{tabular}{@{}l rr rr rr rr r@{}}
 \toprule
