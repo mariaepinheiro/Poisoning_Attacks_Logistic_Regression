@@ -77,7 +77,7 @@ function _finish(mode, R, βlo, βup, θlo, θhi, zlo, zhi, yp, ε, t0, info)
     θplo = [s > 0 ?  zlo : -zhi for s in sp]
     θphi = [s > 0 ?  zhi : -zlo for s in sp]
     n_clamped = 0
-       function αint(a, b)
+    function αint(a, b)
         lo, hi = _σ(a), _σ(b)
         (lo < ε || hi > 1 - ε) && (n_clamped += 1)
         lo, hi = clamp(lo, ε, 1 - ε), clamp(hi, ε, 1 - ε)
