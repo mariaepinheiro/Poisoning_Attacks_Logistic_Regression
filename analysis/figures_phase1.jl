@@ -4,9 +4,14 @@
 #   Writes ac_grid.pdf and mcc_grid.pdf
 #   Mean over the 5 partitions, shaded band = ± 1 standard deviation.
 #   The first point ("LR") is the clean model.
+#   Layout: 4 rows × 2 columns (one panel per dataset).
 # ==============================================================================
 using CSV, DataFrames, Plots, Measures, Statistics
 gr()
+
+const NROWS   = 4             # linhas
+const NCOLS   = 2             # colunas
+const FIGSIZE = (700, 1000)   # largura × altura
 
 const ROOT = normpath(joinpath(@__DIR__, ".."))   # repository root
 const SRC  = joinpath(ROOT, "src")
@@ -66,17 +71,17 @@ function grid_plot(col_lr, col_pa, ylab, ylims)
                  xticks = (x_positions, x_labels), ylims = ylims)
         push!(subplots, p)
     end
-    return plot(subplots...; layout = (2, 4), size = (1000, 500),
+    return plot(subplots...; layout = (NROWS, NCOLS), size = FIGSIZE,
                 plot_title = " ", plot_titlevspan = 0.03)
 end
 
 plt_ac  = grid_plot(:ac_lr,  :ac_pal,  "AC",  (0.2, 1.05))
 plt_mcc = grid_plot(:mcc_lr, :mcc_pal, "MCC", (-0.3, 1.05))
 
+println("Layout usado: $(NROWS) linhas × $(NCOLS) colunas")
+
 display(plt_ac)
 display(plt_mcc)
 
 savefig(plt_ac, joinpath(DIR, "figures", "ac_grid.pdf"))
-savefig(plt_ac, joinpath(DIR, "figures", "ac_grid.png"))
 savefig(plt_mcc, joinpath(DIR, "figures", "mcc_grid.pdf"))
-savefig(plt_mcc, joinpath(DIR, "figures", "mcc_grid.png"))

@@ -1,39 +1,48 @@
 # ==============================================================================
-# figures_phase2.jl — gap and dual-ratio figures for the global optimization
+# figures_phase2.jl — dual-ratio figure for the global optimization
 #   Reads  results/phase2/phase2_results.csv          (PA_G_0, CAR_0, CAR)
 #          results/phase2_pagfull/phase2_pagfull.csv   (PA_G with all bounds)
-#   Writes gap_grid.pdf and ratio_grid.pdf
+#          results/phase2/bounds_summary.csv           (R, for the bound Ū)
+#   Writes ratio_grid.pdf (and .png)
+#
+#   Dual bounds are replaced by min{dual, Ū}, with the analytic bound
+#   Ū = (n + q) log 2 − q φ(−R√d) of inequality (36).
 #
 #   Style: one color per dataset (same as Phase 1);
-#          PA_G dashed + square, CAR solid + circle;
-#          hollow marker = bounds of Prop. 3 only (_0), filled = all bounds.
+#          r_0 dashed, larger hollow diamond; r solid, smaller filled diamond
+#          (the two curves nearly coincide, so both remain visible).
+#   Vertical axis: linear, with its own scale in each panel.
 # ==============================================================================
 using CSV, DataFrames, Plots, Measures, LaTeXStrings
 gr()
 
+const USE_NEW_CAR = true          # true: use results/phase2_car_v2 for CAR_0 and CAR
+
 const ROOT = normpath(joinpath(@__DIR__, ".."))   # repository root
-const SRC  = joinpath(ROOT, "src")
 const DIR  = ROOT
 mkpath(joinpath(DIR, "figures"))
 
 # ==========================================
 # DADOS
 # ==========================================
-r1 = CSV.read(joinpath(DIR, "results", "phase2", "phase2_results.csv"), DataFrame)
-r2 = CSV.read(joinpath(DIR, "results", "phase2_pagfull", "phase2_pagfull.csv"), DataFrame)
+r1  = CSV.read(joinpath(DIR, "results", "phase2", "phase2_results.csv"), DataFrame)
+r2  = CSV.read(joinpath(DIR, "results", "phase2_pagfull", "phase2_pagfull.csv"), DataFrame)
+bnd = CSV.read(joinpath(DIR, "results", "phase2", "bounds_summary.csv"), DataFrame)
 r1.method = replace(r1.method, "PA_G" => "PA_G_0")           # Prop. 3 only
 r2.method = replace(r2.method, "PA_G_full" => "PA_G")        # all bounds
-cols = [:dataset, :q_ratio, :method, :primal, :dual]
+cols = [:dataset, :q_ratio, :method, :n, :d, :q, :dual]
 df = vcat(select(r1, cols), select(r2, cols))
+if USE_NEW_CAR                     # CAR_0 and CAR from the rerun (review note 13)
+    r3 = CSV.read(joinpath(DIR, "results", "phase2_car_v2", "phase2_car_results.csv"), DataFrame)
+    df = vcat(df[.!in.(df.method, Ref(["CAR_0", "CAR"])), :], select(r3, cols))
+end
 
 datasets    = ["biopsy", "Smarket", "fgl", "College", "OJ", "Banknote", "Ionosphere", "Spambase"]
 names_show  = Dict("biopsy" => "Biopsy")
 rhos        = [0.05, 0.10, 0.15, 0.20]
 x_positions = 1:length(rhos)
 x_labels    = ["5%", "10%", "15%", "20%"]
-methods     = ["PA_G_0", "CAR_0", "PA_G", "CAR"]
-
-num(x) = (ismissing(x) || (x isa Real && isnan(x))) ? NaN : Float64(x)
+num(x) = (ismissing(x) || (x isa Real && (isnan(x) || abs(x) > 1e90))) ? NaN : Float64(x)
 
 function getv(ds, rho, m, c)
     sub = df[(df.dataset .== ds) .& isapprox.(df.q_ratio, rho) .& (df.method .== m), :]
@@ -41,19 +50,25 @@ function getv(ds, rho, m, c)
     return num(sub[1, c])
 end
 
-# gaps (%) of the four methods w.r.t. z_best, and the two dual ratios
-function series(ds)
-    gaps = Dict(m => Float64[] for m in methods)
+# limite analítico da desigualdade (36): Ū = (n + q) log 2 − q φ(−R√d)
+φ(z) = z > 0 ? z + log1p(exp(-z)) : log1p(exp(z))
+function Ubar(ds, rho)
+    b = bnd[(bnd.dataset .== ds) .& isapprox.(bnd.q_ratio, rho), :]
+    @assert nrow(b) == 1 "Esperada 1 linha em bounds_summary para $ds, $rho"
+    n, d, q = getv(ds, rho, "CAR", :n), getv(ds, rho, "CAR", :d), getv(ds, rho, "CAR", :q)
+    return (n + q) * log(2) - q * φ(-b[1, :R] * sqrt(d))
+end
+
+# the two dual ratios, computed with min{dual, Ū}
+function ratios(ds)
     r0, r = Float64[], Float64[]
     for rho in rhos
-        z_best = maximum(filter(!isnan, [getv(ds, rho, m, :primal) for m in methods]))
-        for m in methods
-            push!(gaps[m], 100 * (getv(ds, rho, m, :dual) - z_best) / abs(z_best))
-        end
-        push!(r0, getv(ds, rho, "PA_G_0", :dual) / getv(ds, rho, "CAR_0", :dual))
-        push!(r,  getv(ds, rho, "PA_G",   :dual) / getv(ds, rho, "CAR",   :dual))
+        U = Ubar(ds, rho)
+        dual(m) = min(getv(ds, rho, m, :dual), U)
+        push!(r0, dual("PA_G_0") / dual("CAR_0"))
+        push!(r,  dual("PA_G")   / dual("CAR"))
     end
-    return gaps, r0, r
+    return r0, r
 end
 
 # ==========================================
@@ -77,92 +92,59 @@ default(
 base_colors = palette(:tab10)[1:length(datasets)]
 color_map   = Dict(ds => base_colors[i] for (i, ds) in enumerate(datasets))
 
-# line style and marker per method; `hollow` = bounds of Prop. 3 only
-style = Dict(
-    "PA_G_0" => (ls = :dash,  mk = :square, hollow = true),
-    "PA_G"   => (ls = :dash,  mk = :square, hollow = false),
-    "CAR_0"  => (ls = :solid, mk = :circle, hollow = true),
-    "CAR"    => (ls = :solid, mk = :circle, hollow = false))
-
-mcolor(c, hollow) = hollow ? :white : c
-
 # ==========================================
 # SUBGRÁFICOS
 # ==========================================
-gap_subplots, ratio_subplots = [], []
+ratio_subplots = []
 
 for ds in datasets
     c = color_map[ds]
-    gaps, r0, r = series(ds)
+    r0, r = ratios(ds)
     ttl = get(names_show, ds, ds)
 
-    # --- Gap (log) ---
-    p_gap = plot(title = ttl, xlabel = "ρ", ylabel = "gap (%, log scale)",
-                 xticks = (x_positions, x_labels), yscale = :log10, ylims = (1, 1e4))
-    for m in methods            # hollow drawn first, filled on top
-        s = style[m]
-        plot!(p_gap, x_positions, gaps[m]; color = c, linestyle = s.ls, marker = s.mk,
-              markercolor = mcolor(c, s.hollow), markerstrokecolor = c)
-    end
-    push!(gap_subplots, p_gap)
-
-    # --- Dual ratio (log) ---
+    # eixo linear, próprio de cada painel, começando logo abaixo de 1
+    ymax = max(1.1, 1.05 * maximum(vcat(r0, r)))
     p_ratio = plot(title = ttl, xlabel = "ρ", ylabel = "dual ratio",
-                   xticks = (x_positions, x_labels), yscale = :log10, ylims = (0.8, 100))
+                   xticks = (x_positions, x_labels), ylims = (0.98, ymax))
     hline!(p_ratio, [1.0]; color = :gray, linestyle = :dot, linewidth = 1, marker = :none)
     plot!(p_ratio, x_positions, r0; color = c, linestyle = :dash, marker = :diamond,
-          markercolor = :white, markerstrokecolor = c)
+          markersize = 8, markercolor = :white, markerstrokecolor = c)
     plot!(p_ratio, x_positions, r;  color = c, linestyle = :solid, marker = :diamond,
-          markercolor = c, markerstrokecolor = c)
+          markersize = 4, markercolor = c, markerstrokecolor = c)
     push!(ratio_subplots, p_ratio)
 end
 
 # ==========================================
-# PAINÉIS DE LEGENDA (desenhados à mão)
+# PAINEL DE LEGENDA (desenhado à mão)
 # ==========================================
 function legend_panel(entries)
     p = plot(xlims = (0, 1), ylims = (0, 1), framestyle = :box, grid = false,
              ticks = false, title = " ")
     ys = range(0.80, 0.20; length = length(entries))
-    for ((lab, ls, mk, hollow), y) in zip(entries, ys)
+    for ((lab, ls, mk, hollow, ms), y) in zip(entries, ys)
         plot!(p, [0.08, 0.38], [y, y]; color = :black, linestyle = ls, marker = :none)
-        scatter!(p, [0.23], [y]; marker = mk, markersize = 6,
+        scatter!(p, [0.23], [y]; marker = mk, markersize = ms,
                  markercolor = hollow ? :white : :black, markerstrokecolor = :black)
         annotate!(p, 0.46, y, text(lab, 12, :left, "Computer Modern"))
     end
     return p
 end
 
-# If the LaTeX labels do not render, replace them by plain strings,
-# e.g. "PA_G (Prop. 3)", "PA_G (all bounds)", "CAR (Prop. 3)", "CAR (all bounds)".
-gap_legend = legend_panel([
-    (L"\mathrm{PA\_G}_0", :dash,  :square, true),
-    (L"\mathrm{PA\_G}",   :dash,  :square, false),
-    (L"\mathrm{CAR}_0",   :solid, :circle, true),
-    (L"\mathrm{CAR}",     :solid, :circle, false)])
-
 ratio_legend = legend_panel([
-    (L"r_0", :dash,  :diamond, true),
-    (L"r",   :solid, :diamond, false)])
+    (L"r_0", :dash,  :diamond, true,  8),
+    (L"r",   :solid, :diamond, false, 4)])
 
 # ==========================================
-# LAYOUTS (8 datasets + legenda = 3 x 3)
+# LAYOUT (8 datasets + legenda = 3 x 3)
 # ==========================================
-plt_gap_grid = plot(gap_subplots..., gap_legend;
-                    layout = (3, 3), size = (1000, 780),
-                    plot_title = " ", plot_titlevspan = 0.03)
-
 plt_ratio_grid = plot(ratio_subplots..., ratio_legend;
                       layout = (3, 3), size = (1000, 780),
                       plot_title = " ", plot_titlevspan = 0.03)
 
-display(plt_gap_grid)
 display(plt_ratio_grid)
 
 # ==========================================
 # SALVAR (PDF para LaTeX)
 # ==========================================
-savefig(plt_gap_grid, joinpath(DIR, "figures", "gap_grid.pdf"))
-savefig(plt_gap_grid, joinpath(DIR, "figures", "gap_grid.png"))
 savefig(plt_ratio_grid, joinpath(DIR, "figures", "ratio_grid.pdf"))
 savefig(plt_ratio_grid, joinpath(DIR, "figures", "ratio_grid.png"))
